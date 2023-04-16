@@ -22,7 +22,7 @@ base_model = BloomForCausalLM.from_pretrained(
 )
 
 # first_weight = base_model.model.layers[0].self_attn.q_proj.weight
-first_weight = base_model.transformer.h[0].self_attention.query_key_value
+first_weight = base_model.transformer.h[0].self_attention.query_key_value.weight
 first_weight_old = first_weight.clone()
 
 lora_model = PeftModel.from_pretrained(
@@ -53,7 +53,7 @@ lora_model.train(False)
 # did we do anything?
 assert not torch.allclose(first_weight_old, first_weight)
 
-lora_model_sd = lora_model.state_dict()
+lora_model_sd = lora_model.state_dict()  # key like:base_model.model.transformer.h.15.self_attention.dense.weight
 # deloreanized_sd = {
 #     k.replace("base_model.model.", ""): v
 #     for k, v in lora_model_sd.items()
@@ -61,11 +61,12 @@ lora_model_sd = lora_model.state_dict()
 # }
 
 deloreanized_sd = {
-    k.replace("base_model.transformer.", ""): v
+    k.replace("base_model.model.", ""): v
     for k, v in lora_model_sd.items()
     if "lora" not in k
 }
 
 BloomForCausalLM.save_pretrained(
-    base_model, "./hf_ckpt", state_dict=deloreanized_sd, max_shard_size="400MB"
+    base_model, "./hf_ckpt", state_dict=deloreanized_sd, max_shard_size="10GB"
 )
+tokenizer.save_pretrained("./hf_ckpt")

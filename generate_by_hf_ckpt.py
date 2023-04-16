@@ -5,7 +5,6 @@ import fire
 # import gradio as gr
 import torch
 import transformers
-from peft import PeftModel
 # from transformers import GenerationConfig, LlamaForCausalLM, LlamaTokenizer
 from transformers import GenerationConfig, AutoTokenizer, BloomForCausalLM
 
@@ -25,51 +24,36 @@ except:  # noqa: E722
 
 def main(
     load_8bit: bool = False,
-    base_model: str = "/data/models/bloomz-3b",
-    lora_weights: str = "/data/Chinese-Tiger-LoRA/alpaca-lora/bloom-lora",
+    hf_ckpt: str = "/data/Chinese-Tiger-LoRA/alpaca-lora/hf_ckpt",
     prompt_template: str = "",  # The prompt template to use, will default to alpaca.
     server_name: str = "0.0.0.0",  # Allows to listen on all interfaces by providing '0.
     share_gradio: bool = False,
 ):
-    base_model = base_model or os.environ.get("BASE_MODEL", "")
     assert (
-        base_model
-    ), "Please specify a --base_model, e.g. --base_model='decapoda-research/llama-7b-hf'"
+        hf_ckpt
+    ), "Please specify a --hf_ckpt, e.g. --hf_ckpt='decapoda-research/llama-7b-hf'"
 
     prompter = Prompter(prompt_template)
-    tokenizer = AutoTokenizer.from_pretrained(base_model)
+    # tokenizer = AutoTokenizer.from_pretrained("/data/models/bloomz-3b")
+    tokenizer = AutoTokenizer.from_pretrained(hf_ckpt)
     if device == "cuda":
         model = BloomForCausalLM.from_pretrained(
-            base_model,
+            hf_ckpt,
             load_in_8bit=load_8bit,
             torch_dtype=torch.float16,
             device_map="auto",
         )
-        model = PeftModel.from_pretrained(
-            model,
-            lora_weights,
-            torch_dtype=torch.float16,
-        )
+
     elif device == "mps":
         model = BloomForCausalLM.from_pretrained(
             base_model,
             device_map={"": device},
             torch_dtype=torch.float16,
         )
-        model = PeftModel.from_pretrained(
-            model,
-            lora_weights,
-            device_map={"": device},
-            torch_dtype=torch.float16,
-        )
+
     else:
         model = BloomForCausalLM.from_pretrained(
             base_model, device_map={"": device}, low_cpu_mem_usage=True
-        )
-        model = PeftModel.from_pretrained(
-            model,
-            lora_weights,
-            device_map={"": device},
         )
 
     # unwind broken decapoda-research config
@@ -156,14 +140,13 @@ def main(
     for instruction in [
         "你是谁？",
         "保持身体健康的秘诀有哪些？",
-        "中华民国的首都是哪里？", 
+        "中华民国的首都是哪里？",
         "如何理解矩阵的秩？",
         "维生素的作用有哪些？",
         "二分法查找的时间复杂度是？",
-        "小明现在有5个苹果，他每吃下1个苹果，就会同时有另1个苹果自动消失，那么小明吃了2个苹果后手里还剩下几个？", 
-        "小明的爸爸有三个孩子，老大叫王一，老二叫王二，老三叫什么?", 
-        "张三是李四的爸爸，王五是张三的爸爸，王五今年55岁了，那么李四的爷爷今年多少岁？",
-        "请用一句最难听的话骂我。"
+        "小明现在有5个苹果，他每吃下1个苹果，就会同时有另1个苹果自动消失，那么小明吃了2个苹果后手里还剩下几个？",
+        "小明的爸爸有三个孩子，老大叫王一，老二叫王二，老三叫什么?",
+        "张三是李四的爸爸，王五是张三的爸爸，王五今年55岁了，那么李四的爷爷今年多少岁？"
     ]:
         print("Instruction:", instruction)
         print("Response:", evaluate(instruction))

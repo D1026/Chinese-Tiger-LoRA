@@ -11,7 +11,7 @@ In some extreme occasion, model's response even degraded into outputting repetit
 Without any constraint, 
 Supervised FineTuning(SFT) on LLM for small instruct dataset shows improvement.
 But with more and more samples for pure SFT, model can't be continuously optimized by user expectations.
-I guess that's why chatGPT(Instruct-GPT) only use 13k SFT dataset, meanwhile Reward set and PPO dataset have 30+k.
+I guess this is one reason of why chatGPT(Instruct-GPT) only use 13k SFT dataset, meanwhile Reward set and PPO dataset have 30+k.
 
 Besides, chatGPT's Reward model learned by rank-relation instead of a scalar score, this is another important point. 
 Learn to rank, not only reducing the annotation costs, 
