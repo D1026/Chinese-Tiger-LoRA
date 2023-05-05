@@ -92,6 +92,7 @@ from peft.utils import (TRANSFORMERS_MODELS_TO_PREFIX_TUNING_POSTPROCESS_MAPPING
 #         return causal_lm_output
 # --- end ---
 
+
 class PeftModelForCausalLM(PeftModel):
     """
     Peft model for causal language modeling.
@@ -102,11 +103,8 @@ class PeftModelForCausalLM(PeftModel):
 
     """
 
-    def __init__(self, model, peft_config, adapter_name="default"):
-        # super().__init__(model, peft_config, adapter_name)
-        # I don't know why add parameter "adapter_name" return ERROR :
-        # 'PeftModel.__init__() takes 3 positional arguments but 4 were given', maybe a bug
-        super().__init__(model, peft_config)
+    def __init__(self, model, peft_config: PeftConfig, adapter_name="default"):
+        super().__init__(model, peft_config, adapter_name)
         self.base_model_prepare_inputs_for_generation = self.base_model.prepare_inputs_for_generation
 
     def forward(
