@@ -49,3 +49,34 @@ class Prompter(object):
 
     def get_response(self, output: str) -> str:
         return output.split(self.template["response_split"])[1].strip()
+
+    def generate_prompt_chat(
+        self,
+        round: Union[None, str] = None,
+        label: Union[None, str] = None,
+    ) -> str:
+        # returns the full prompt from instruction and optional input
+        # if a label (=response, =output) is provided, it's also appended.
+        res = self.template["prompt_round"]
+        if round:
+            roles = ["### User:\n", "### Assistant:\n"]
+            for txt in round:
+                # txt need end with '\n', like: "That's a good question.\n"
+                role = roles.pop(0)
+                roles.append(role)
+                res += role
+                res += (txt+'\n')
+
+            res += "### Assistant:\n"
+
+        else:
+            print("chat_round is empty, it means no input to chat-assistant.")
+
+        if label:
+            res = f"{res}{label}"
+        if self._verbose:
+            print(res)
+        return res
+
+    def get_response_chat(self, output: str) -> str:
+        return output.split(self.template["response_split"])[-1].strip()

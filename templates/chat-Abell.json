@@ -1,0 +1,5 @@
+{
+    "description": "Template used by chat-Abell.",
+    "prompt_round": "Below is a conversation between User and Assistant. Write a reply that appropriately completes the user's request.\n\n",
+    "response_split": "### Assistant:"
+}
