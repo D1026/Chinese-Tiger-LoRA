@@ -23,6 +23,11 @@ I'm now working on find out a new way for LLM SFT constraint.
 by the way, I'm not consider using KL divergence penalty, as chatGPT/instructGPT did during reinforcement learning training.
 If you have any idea, contact me by {ivan_duan@126.com or open an Issues, I will reply soon}.
 
+result-record:
+It appears various constraint can't help for training a better SFT model. In contrast, designing a more diverse and effective SFT dataset is even more useful.
+
+尝试了各种SFT training 阶段约束，效果上看起来，增加“约束”条件 并不如 设计更好、更多样性的 SFT 数据集；
+
 ### project Information
 1. This code based on [tloen/alpaca-lora](https://github.com/tloen/alpaca-lora)
 2. We collected all chinese instruction dataset before 2023/04/01 from belows:

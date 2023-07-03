@@ -28,9 +28,11 @@ from utils.prompter import Prompter
 
 def train(
     # model/data params
-    base_model: str = "/data/models/bloomz-3b",  # the only required argument
-    data_path: str = "/data/Chinese-Tiger-LoRA/data",
-    output_dir: str = "./bloom-alpaca",
+    # base_model: str = "/data/models/bloomz-3b",  # the only required argument
+    base_model: str = "/data/models/bloomz-7b1",  # the only required argument
+    # data_path: str = "/data/Chinese-Tiger-LoRA/data",
+    data_path: str = "/data/Chinese-Tiger-LoRA/data_chat",
+    output_dir: str = "./bloom-alpaca_7b1",
     # training hyperparams
     batch_size: int = 128,
     micro_batch_size: int = 32,
@@ -183,7 +185,9 @@ def train(
     if data_path.endswith(".json") or data_path.endswith(".jsonl"):
         data = load_dataset("json", data_files=data_path)
     else:
-        data = load_dataset(data_path)
+        fs = os.listdir(data_path)
+        data = load_dataset("json", data_dir=data_path, data_files=fs)
+        # data = load_dataset(data_path)
 
     if resume_from_checkpoint:
         # Check the available weights and load them
@@ -201,7 +205,8 @@ def train(
         if os.path.exists(checkpoint_name):
             print(f"Restarting from {checkpoint_name}")
             adapters_weights = torch.load(checkpoint_name)
-            model = set_peft_model_state_dict(model, adapters_weights)
+            # model = set_peft_model_state_dict(model, adapters_weights)
+            set_peft_model_state_dict(model, adapters_weights)
         else:
             print(f"Checkpoint {checkpoint_name} not found")
 
