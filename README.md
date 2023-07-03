@@ -1,4 +1,13 @@
 # 🐅Chinese-Tiger-LoRA
+### record [2023/07/03]
+最近面试了安远AI的对齐与安全项目，面试中交流了关于ai是否已经“主动意识” 或者“理解能力”和“逻辑能力”，我的观点倾向于（对于当前的基于Autoregressive LM的大模型）没有，
+但架不住很多观点认为，在许多所谓推理数据集上，大模型能够展现出逐步分析的推理过程。基于此认为 大模型有一定的理解能力。
+实际上，区分 模型到底是有现实世界概念间的理解力，还是“背书”（rote learning), 那么我们需要设计一个新的 “逻辑规则” （保证这个规则足够奇葩、新颖，训练数据里没见过），看模型是否能按照这个逻辑，去进行推理。
+
+结果是悲观的，
+如下，是我在测试模型时曾经使用的，两个自创的例子，即使强如 chat-gpt/gpt-4 也不能回答正确，并且出现幻觉分析过程。
+
+
 ### record [2023/04/06]
 By testing the check-points during the model training, we found that model not always towards to better.
 
